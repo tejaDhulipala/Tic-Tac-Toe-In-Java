@@ -2,7 +2,6 @@ import java.util.Objects;
 
 public class Board {
     private char[][] grid;
-    private boolean player;
     public Board(int width){
         if (width <= 2) {
             throw new IllegalArgumentException("Width can't be less than 3");
@@ -15,10 +14,9 @@ public class Board {
                 row[j] = ' ';
             }
         }
-        player = false;
     }
 
-    public String setChar(int row, int column, char type){
+    public boolean setChar(int row, int column, char type){
         /*
         if it returns sucess that means that a valid row, column was inputted, otherwise, an alreadt existing
          spot was inputted
@@ -26,59 +24,58 @@ public class Board {
         if (row >= grid.length || column >= grid.length || (type != 'O' && type != 'X')){
             throw new IllegalArgumentException("the position is too high or you inputted the wrong character");
         }
+        if (grid[row][column] != ' '){
+            return false;
+        }
         // The top left is 0,0 which is kinda wacky but it is like that because each element of the grid starting from zero
         // is actually a row, not a column
         grid[row][column] = type;
-        return "Success";
+        return true;
     }
 
+    /**
+     * @param type
+     * @return if type of char specified ahs a complete row, diaganol, or column
+     */
     public boolean checkWin(char type) {
-        // This clunky piece checks for horizontal, vertical, or diagnol wins by using the same iterator to represent
-        // different things
-        boolean upDiagonal = true;
-        boolean downDiagonal = true;
-        for (int i = 0; i < grid.length; i++) {
-            // Check vertical win
-            // Check each element in the column to see if it is the type wanted
-            // grid[a][b] -> a is the row from the top, b is the column from the top
-            // if checking for a vertical win, then a should be changing and b should be constant
-            for (int j = 0; j < grid.length; j++) {
-                if (grid[j][i] != type) {
+        // Grid[row][col]
+        // Check horizontal win
+        boolean horizontalWin = false;
+        for (int row = 0; row < grid.length; row++) {
+            int occurs = 0;
+            for (char c: grid[row]) {
+                if (type == c) {
+                    occurs++;
+                }
+            }
+            if (occurs == grid.length) {
+                return true;
+            }
+        }
+
+        // Check Vertical Win
+        for (int col = 0; col < grid.length; col++){
+            for (int row = 0; row < grid.length; row++){
+                if (grid[row][col] != type){
                     break;
-                    // breaks and goes to the next column
-                } else if (i == grid.length - 1) {
-                    // if it reaches the end of the column it is true
+                } else if (row == grid.length - 1){
                     return true;
                 }
             }
-            // Check horizontal win
-            // Check each element in the column to see if it is the type wanted
-            // If chekcing for a horizontal win then grid[b] should be changing
-            for (int k = 0; k < grid.length; k++) {
-                if (grid[i][k] != type) {
-                    break;
-                    // breaks and goes to the next row
-                } else if (k == grid.length - 1) {
-                    // if it reaches the end of the row it is true
-                    return true;
-                }
+        }
+
+        // Check diagnol
+        int leftDiagnol = 0, rightDiagnol = 0;
+        for (int row = 0; row < grid.length; row++) {
+            if (grid[row][row] == type) {
+                leftDiagnol++;
             }
-            // Check down diagonal
-            if (grid[i][i] != type) {
-                upDiagonal = false;
-            }
-            // Check up diagonal
-            if (grid[i][grid.length - 1 - i] != type){
-                downDiagonal = false;
+            if (grid[grid.length - 1 - row][grid.length - 1 - row] == type) {
+                rightDiagnol++;
             }
         }
-        if (upDiagonal){
-            System.out.println("up diagnol victory royale");
-        }
-        if (downDiagonal){
-            System.out.println("down diagnol victory royale");
-        }
-        return upDiagonal || downDiagonal;
+
+        return leftDiagnol == grid.length || rightDiagnol == grid.length;
     }
 
     public boolean checkDraw(){
