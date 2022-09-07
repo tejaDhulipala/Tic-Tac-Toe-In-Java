@@ -22,7 +22,7 @@ public class Board {
          spot was inputted
          */
         if (row >= grid.length || column >= grid.length || (type != 'O' && type != 'X')){
-            throw new IllegalArgumentException("the position is too high or you inputted the wrong character");
+            return false;
         }
         if (grid[row][column] != ' '){
             return false;

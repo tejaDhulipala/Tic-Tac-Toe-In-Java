@@ -34,7 +34,10 @@ public class TicTacToe {
         System.out.println(board);
         while (!Objects.equals(readStringLine("exit??? ", inputReader), "yes")) {
             // Player One's turn
-            board.setChar(readInt("X Row Number: ", inputReader), readInt("X Column Number: ", inputReader), 'X');
+            boolean validPlacementX = board.setChar(readInt("X Row Number: ", inputReader), readInt("X Column Number: ", inputReader), 'X');
+            while (!validPlacementX){
+                validPlacementX = board.setChar(readInt("X Row Number: ", inputReader), readInt("X Column Number: ", inputReader), 'X');
+            }
             System.out.println(board);
             // X can only win on their turn and the same for O, so putting oWin in uneccesary
             xWin = board.checkWin('X');
@@ -46,7 +49,10 @@ public class TicTacToe {
                 break;
             }
             // Player O's turn
-            board.setChar(readInt("O Row Number: ", inputReader), readInt("O Column Number: ", inputReader), 'O');
+            boolean validPlacementO = board.setChar(readInt("O Row Number: ", inputReader), readInt("O Column Number: ", inputReader), 'O');
+            while (!validPlacementO){
+                validPlacementO = board.setChar(readInt("O Row Number: ", inputReader), readInt("O Column Number: ", inputReader), 'O');
+            }
             System.out.println(board.toString());
             oWin = board.checkWin('O');
             if (oWin) {
